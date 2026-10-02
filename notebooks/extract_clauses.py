@@ -11,30 +11,30 @@ from litellm import completion
 # ---------------------------------------------------------
 # 1. Define the setup for LLM agnostic
 # ---------------------------------------------------------
+def main():
+    env_path = Path.cwd() / ".env"
+    if env_path.exists():
+        load_dotenv(dotenv_path=env_path)
+    else:
+        print(f"No .env file found at {env_path}. Copy .env.template to .env and add your API key.")
+        print("If you already set the key in your shell, this cell will still proceed.")
 
-env_path = Path.cwd() / ".env"
-if env_path.exists():
-    load_dotenv(dotenv_path=env_path)
-else:
-    print(f"No .env file found at {env_path}. Copy .env.template to .env and add your API key.")
-    print("If you already set the key in your shell, this cell will still proceed.")
-
-required_keys = ["DATAGEN_GEMINI_API_KEY"]
-missing = [k for k in required_keys if not os.getenv(k)]
-if missing:
-    print(f"Missing required keys: {missing}. Add them to your .env file before continuing.")
-else:
-    print("Environment OK — required keys found.")
+    required_keys = ["DATAGEN_GEMINI_API_KEY"]
+    missing = [k for k in required_keys if not os.getenv(k)]
+    if missing:
+        print(f"Missing required keys: {missing}. Add them to your .env file before continuing.")
+    else:
+        print("Environment OK — required keys found.")
 
 
-# ---------------------------------------------------------
-# 2. Validate a record in the input file from data folder
-# ---------------------------------------------------------
+    # ---------------------------------------------------------
+    # 2. Validate a record in the input file from data folder
+    # ---------------------------------------------------------
 
-with open("data/lexops/intake/records.jsonl") as f:
-    invoices = json.load(f)
-print(f"Loaded {len(invoices)} sample invoice/email records.")
-print(invoices[0])
+    with open("data/lexops/intake/records.jsonl") as f:
+        records = json.load(f)
+    print(f"Loaded {len(records)} sample intake/records records.")
+    print(records[0])
 
 
 # ---------------------------------------------------------
@@ -180,4 +180,19 @@ def process_records(
                 )
 
 
+# --------------------------------------------------------- 
+# 7. Application entry point 
 # ---------------------------------------------------------
+if __name__ == "__main__":
+    main()
+    # Use the LLM to process the records
+    # process_records(
+    #     generate_text=lambda prompt: completion(
+    #         prompt=prompt,
+    #         model="gemini-1.5",
+    #         temperature=0.0,
+    #         max_tokens=1000,
+    #     ),
+    #     input_file="data/lexops/intake/records.jsonl",
+    #     output_file="data/lexops/output/extracted_clauses.jsonl",
+    # )
