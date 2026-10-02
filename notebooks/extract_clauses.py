@@ -31,11 +31,16 @@ def main():
     # 2. Validate a record in the input file from data folder
     # ---------------------------------------------------------
 
-    with open("data/lexops/intake/records.jsonl") as f:
-        records = json.load(f)
+    with open("../data/lexops/intake/records.jsonl") as f:
+        records = [
+            json.loads(line)
+            for line in f
+            if line.strip()
+        ]
     print(f"Loaded {len(records)} sample intake/records records.")
     print(records[0])
 
+# records = json.load(f) replaced with teh above code due to an error.
 
 # ---------------------------------------------------------
 # 1. Define the allowed clause types
