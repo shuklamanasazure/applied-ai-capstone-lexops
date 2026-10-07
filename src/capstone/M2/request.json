@@ -1,0 +1,21 @@
+{
+  "contract": {
+    "contract_id": "NW-CR-88903",
+    "counterparty": "CyberShield Systems",
+    "contract_value": 2000000,
+    "description": "Cybersecurity services agreement"
+  },
+  "risk_requests": [
+    {
+      "clause_type": "liability_cap",
+      "contract_value": 2000000,
+      "contract_position": 500000,
+      "playbook_position": 1000000
+    }
+  ],
+  "renewal": {
+    "contract_id": "NW-CR-88903",
+    "renewal_date": "2027-12-31",
+    "notice_period": 60
+  }
+}
