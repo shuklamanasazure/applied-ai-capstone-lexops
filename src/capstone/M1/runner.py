@@ -1,3 +1,5 @@
+# To Process your 200 JSONL contracts stored in  "data/lexops/intake/records.jsonl", Execute uv run python -m capstone.M1.runner
+
 # Import json to read JSONL records.
 import json
 
@@ -37,7 +39,7 @@ def process_contracts() -> None:
 
             # Convert the raw record into our controlled input contract.
             request = ContractReviewRequest(
-                contract_id=record["request_id"],
+                contract_id=record["record_id"],
                 counterparty=record["counterparty_name"],
                 contract_text=record["attached_clause_text"],
             )
