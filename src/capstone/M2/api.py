@@ -16,7 +16,7 @@ app = FastAPI(
 )
 
 
-@app.get("/health")
+@app.get("/M2health")
 def health():
     return {"status": "ok"}
 
