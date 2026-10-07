@@ -15,6 +15,10 @@ app = FastAPI(
 )
 
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 # Define the contract extraction endpoint.
 @app.post(
     "/extract",
