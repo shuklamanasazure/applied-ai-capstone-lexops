@@ -1,8 +1,8 @@
 """Unit test for deterministic Markdown chunking."""
 
 # Import the service implementation.
-from app.llm import LLMService
-from app.qdrant_store import QdrantStore
+from capstone.M3.llm import LLMService
+from capstone.M3.qdrant_store import QdrantStore
 
 
 def test_chunking_preserves_full_text():
