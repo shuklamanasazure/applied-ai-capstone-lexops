@@ -1,0 +1,9 @@
+{
+    "counterparty_id": "acme",
+    "contract_id": "acme-2026",
+    "clause_type": "liability",
+    "request": "5x annual fees",
+    "outcome": "approved 2x annual fees",
+    "rationale": "Firm policy and prior Acme precedent",
+    "source": "Acme Contract 2026"
+  }
