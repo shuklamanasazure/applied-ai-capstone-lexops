@@ -25,20 +25,29 @@ class LLMService:
         # Create Claude client only when Claude is selected and a key exists.
         self.claude = Anthropic(api_key=settings.claude_api_key) if settings.claude_api_key else None
 
-    def embed(self, texts: list[str]) -> list[list[float]]:
+    def embed(self, texts: list[str], batch_size: int = 5,) -> list[list[float]]:
         """Create one embedding vector per input text."""
         # Fail early with a useful message instead of a confusing SDK error.
         if not self.gemini:
             raise RuntimeError("GEMINI_API_KEY is required for Qdrant embeddings.")
-        # Ask Gemini for multiple embeddings in one request to reduce API calls.
-        response = self.gemini.models.embed_content(
-            model=settings.gemini_embedding_model,
-            contents=texts,
-            config=types.EmbedContentConfig(output_dimensionality=settings.embedding_dimension),
-        )
-        # Convert SDK embedding objects into plain Python lists for Qdrant.
-        return [list(item.values) for item in response.embeddings]
 
+         all_embeddings: list[list[float]] = []
+
+        for start in range(0, len(texts), batch_size):
+            batch = texts[start:start + batch_size]
+        
+            # Ask Gemini for multiple embeddings in one request to reduce API calls.
+            response = self.gemini.models.embed_content(
+                model=settings.gemini_embedding_model,
+                contents=batch,
+                config=types.EmbedContentConfig(output_dimensionality=settings.embedding_dimension),
+            )
+            # Convert SDK embedding objects into plain Python lists for Qdrant.
+            all_embeddings.extend([list(item.values) for item in response.embeddings])
+        
+        return all_embeddings
+
+    
     def generate(self, prompt: str) -> str:
         """Generate text using the configured provider."""
         # Use Gemini when configured because it is the default low-cost path for this assignment.
