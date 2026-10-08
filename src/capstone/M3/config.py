@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     # Gemini API key used for embeddings and default LLM.
     gemini_api_key: str | None = None
     # Keep the generation model configurable because free-tier model availability changes.
-    gemini_model: str = "gemini-2.5-flash"
+    gemini_model: str = "gemini-3.8-flash"
     # Use Gemini embedding model for Qdrant vectors.
     gemini_embedding_model: str = "gemini-embedding-001"
     # 768 is a practical assignment-sized embedding dimension.
