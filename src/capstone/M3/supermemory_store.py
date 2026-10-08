@@ -30,7 +30,7 @@ class SupermemoryStore:
             "containerTags": [settings.supermemory_namespace, f"counterparty:{counterparty_id}"],
         }
         # Send the memory to Supermemory.
-        async with httpx.AsyncClient(timeout=30) as client:
+        async with httpx.AsyncClient(timeout=30, follow_redirects=True,) as client:
             response = await client.post(f"{self.base_url}/memories", headers=self._headers(), json=body)
             # Raise a clear exception for API errors.
             response.raise_for_status()
@@ -48,7 +48,7 @@ class SupermemoryStore:
             "containerTags": [settings.supermemory_namespace, f"counterparty:{counterparty_id}"],
         }
         # Execute semantic memory search.
-        async with httpx.AsyncClient(timeout=30) as client:
+        async with httpx.AsyncClient(timeout=30, follow_redirects=True,) as client:
             response = await client.post(f"{self.base_url}/search", headers=self._headers(), json=body)
             # Surface API errors to the FastAPI layer.
             response.raise_for_status()
