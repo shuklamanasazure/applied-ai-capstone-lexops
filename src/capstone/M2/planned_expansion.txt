@@ -1,0 +1,54 @@
+# First cut - No LLM call has been used, Deterministic - keep calculating in Python for deviation, risk_score andrenewal_event
+# LLM should be used to create Memo_content
+
+
+# MockAPI data from data-toolkit was not used.
+# Map the data and fields from data-toolkit mockapi with the Models and schema to create the contract
+
+Data: /home/ubuntu/lexops-project/applied-ai-capstone-lexops/data/lexops/mock_api
+contracts.csv	contract_id,counterparty_id,contract_type,status,effective_date,term_months,auto_renew,renewal_notice_days,annual_value_usd,liability_cap_multiple,risk_score
+	NW-K-00000,NW-CP-0110,Vendor Terms,draft,2024-02-23,12,False,30,60000,2.0,82
+	NW-K-00001,NW-CP-0103,DPA,executed,2026-04-26,24,True,60,120000,3.0,37
+	NW-K-00002,NW-CP-0027,Reseller,in_negotiation,2025-10-19,36,False,30,480000,2.0,76
+contracts.json	[
+	  {
+	    "contract_id": "NW-K-00000",
+	    "counterparty_id": "NW-CP-0110",
+	    "contract_type": "Vendor Terms",
+	    "status": "draft",
+	    "effective_date": "2024-02-23",
+	    "term_months": 12,
+	    "auto_renew": false,
+	    "renewal_notice_days": 30,
+	    "annual_value_usd": 60000,
+	    "liability_cap_multiple": 2.0,
+	    "risk_score": 82
+	  },
+	  ]
+counterparties.csv	counterparty_id,legal_name,jurisdiction,relationship,negotiation_rounds_to_date,historical_posture
+	NW-CP-0000,"Evans Holdings, Inc.",Singapore,customer,4,standard
+	NW-CP-0001,"Chapman Partners, Inc.",Delaware,customer,1,aggressive
+	NW-CP-0002,"Patterson Systems, Inc.",Karnataka,customer,3,aggressive
+counterparties.json	[
+	  {
+	    "counterparty_id": "NW-CP-0000",
+	    "legal_name": "Evans Holdings, Inc.",
+	    "jurisdiction": "Singapore",
+	    "relationship": "customer",
+	    "negotiation_rounds_to_date": 4,
+	    "historical_posture": "standard"
+	  },
+	]
+signature_requests.csv	envelope_id,contract_id,status,sent_at,signer_email
+	NW-SIG-00000,NW-K-00120,sent,2026-02-12T15:01,michellehill@morgan-french.com
+	NW-SIG-00001,NW-K-00249,sent,2026-07-12T03:37,campbellkenneth@carpenter.info
+	NW-SIG-00002,NW-K-00166,signed,2026-07-05T06:42,jreed@bennett.com
+signature_requests.json	[
+	  {
+	    "envelope_id": "NW-SIG-00000",
+	    "contract_id": "NW-K-00120",
+	    "status": "sent",
+	    "sent_at": "2026-02-12T15:01",
+	    "signer_email": "michellehill@morgan-french.com"
+	  }
+	]
