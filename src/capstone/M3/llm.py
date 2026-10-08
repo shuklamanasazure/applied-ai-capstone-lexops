@@ -31,7 +31,7 @@ class LLMService:
         if not self.gemini:
             raise RuntimeError("GEMINI_API_KEY is required for Qdrant embeddings.")
 
-         all_embeddings: list[list[float]] = []
+        all_embeddings: list[list[float]] = []
 
         for start in range(0, len(texts), batch_size):
             batch = texts[start:start + batch_size]
