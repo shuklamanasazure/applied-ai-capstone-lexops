@@ -7,6 +7,8 @@ from langgraph.checkpoint.memory import InMemorySaver
 # Import the retry policy used for transient node failures.
 from langgraph.types import RetryPolicy
 
+from capstone.M5.schemas import ReviewState
+
 # Import all workflow node functions.
 from capstone.M5.nodes import (
     extract_node,
@@ -37,7 +39,7 @@ def route_by_risk(state: dict) -> str:
 # Construct the reusable graph.
 def build_graph(checkpointer=None):
     # Create a typed graph builder using the dictionary-based state.
-    builder = StateGraph(dict)
+    builder = StateGraph(ReviewState)
 
     # Register clause extraction and retry transient failures.
     builder.add_node(
