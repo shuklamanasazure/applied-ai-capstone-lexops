@@ -5,10 +5,10 @@ from fastapi import FastAPI, HTTPException
 from langgraph.types import Command
 
 # Import request schemas.
-from capstone.m5.schemas import ReviewRequest, ApprovalRequest
+from capstone.M5.schemas import ReviewRequest, ApprovalRequest
 
 # Import the graph factory.
-from capstone.m5.graph import build_graph
+from capstone.M5.graph import build_graph
 
 
 # Create the HTTP application.

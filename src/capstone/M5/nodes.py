@@ -2,7 +2,7 @@
 from typing import Any
 
 # Import the structured models.
-from capstone.m5.schemas import ContractClause, ContractSummary, ReviewState
+from capstone.M5.schemas import ContractClause, ContractSummary, ReviewState
 
 
 

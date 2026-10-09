@@ -8,7 +8,7 @@ from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.types import RetryPolicy
 
 # Import all workflow node functions.
-from capstone.m5.nodes import (
+from capstone.M5.nodes import (
     extract_node,
     compare_node,
     risk_node,
