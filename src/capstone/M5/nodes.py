@@ -191,7 +191,7 @@ def human_review_node(state: dict[str, Any]) -> dict[str, Any]:
     )
 
     # Validate the decision received when the graph resumes.
-    from capstone.m5.schemas import ApprovalRequest
+    from capstone.M5.schemas import ApprovalRequest
 
     # Reject malformed decisions before they enter the final state.
     approval = ApprovalRequest.model_validate(response)
@@ -224,7 +224,7 @@ def finalize_node(state: dict[str, Any]) -> dict[str, Any]:
     events = state.get("audit_events", []) + ["review_finalized"]
 
     # Construct the final review package from workflow state.
-    from capstone.m5.schemas import ReviewPackage
+    from capstone.M5.schemas import ReviewPackage
 
     # Validate that the final output contains the expected fields.
     package = ReviewPackage(
