@@ -220,6 +220,11 @@ def human_review_node(state: dict[str, Any]) -> dict[str, Any]:
 
 # Assemble the final internal review package.
 def finalize_node(state: dict[str, Any]) -> dict[str, Any]:
+
+    # Temporary diagnostic: inspect keys available at finalization.
+    print("DEBUG finalize_node keys:", list(state.keys()))
+    print("DEBUG review_id:", state.get("review_id"))
+    
     # Add the finalization event to the audit trail.
     events = state.get("audit_events", []) + ["review_finalized"]
 
