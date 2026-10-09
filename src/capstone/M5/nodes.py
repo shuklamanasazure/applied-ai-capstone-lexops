@@ -8,6 +8,11 @@ from capstone.M5.schemas import ContractClause, ContractSummary, ReviewState
 
 # Extract a clause when a known heading appears in the contract.
 def extract_node(state: dict[str, Any]) -> dict[str, Any]:
+    
+    #Diagnostics
+    print("DEBUG extract_node keys:", list(state.keys()))
+    print("DEBUG contract present:", "contract" in state)
+    
     # Read the contract text from the current graph state.
     contract = state["contract"]
 
@@ -62,6 +67,10 @@ def extract_node(state: dict[str, Any]) -> dict[str, Any]:
 
 # Compare the extracted clauses with the approved playbook.
 def compare_node(state: dict[str, Any]) -> dict[str, Any]:
+
+    #Diagnostics
+    print("DEBUG compare_node keys:", list(state.keys()))
+
     # Read the extracted summary from the state.
     summary = ContractSummary.model_validate(state["contract_summary"])
 
@@ -224,7 +233,7 @@ def finalize_node(state: dict[str, Any]) -> dict[str, Any]:
     # Temporary diagnostic: inspect keys available at finalization.
     print("DEBUG finalize_node keys:", list(state.keys()))
     print("DEBUG review_id:", state.get("review_id"))
-    
+
     # Add the finalization event to the audit trail.
     events = state.get("audit_events", []) + ["review_finalized"]
 

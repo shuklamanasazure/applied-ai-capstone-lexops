@@ -22,8 +22,8 @@ from capstone.M5.nodes import (
 
 
 # Define the data passed between nodes.
-class ReviewState(dict):
-    """Document the state shape conceptually; graph nodes use dictionary fields."""
+# class ReviewState(dict):
+#     """Document the state shape conceptually; graph nodes use dictionary fields."""
 
 
 # Select the next node using deterministic Python policy.
