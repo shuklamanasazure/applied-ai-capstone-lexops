@@ -118,24 +118,71 @@ class QdrantStore:
             text = path.read_text(encoding="utf-8", errors="ignore")
             # Split large documents into retrieval-sized chunks.
             chunks = self._chunk_markdown(text)
+            # Skip empty documents.
+            if not chunks:
+                continue
             # Build metadata once per file.
             metadata = self._infer_metadata(path, root, index_data)
-            # Embed all chunks from one file together to reduce API calls and token overhead.
-            vectors = self.llm.embed(chunks) if chunks else []
-            # Add each chunk independently so search can return precise evidence.
-            for chunk_number, (chunk, vector) in enumerate(zip(chunks, vectors)):
-                # Add chunk-level metadata for filtering and citation.
-                payload = {**metadata, "chunk_number": chunk_number, "text": chunk}
-                # Create a unique Qdrant point ID.
-                point_id = str(uuid.uuid5(uuid.NAMESPACE_URL, f"{relative_key(path, root)}:{chunk_number}"))
-                # Upsert the vector and payload.
+             # Generate deterministic IDs for the chunks.
+            file_key = relative_key(path, root)
+            point_ids = [
+                str(uuid.uuid5(uuid.NAMESPACE_URL, f"{file_key}:{i}"))
+                for i in range(len(chunks))
+            ]
+             # Find already stored points without downloading their vectors.
+            existing_points = self.client.retrieve(
+                collection_name=settings.qdrant_collection,
+                ids=point_ids,
+                with_payload=True,
+                with_vectors=False,
+            )
+            # Map existing IDs to their stored text.
+            existing_text = {
+                str(point.id): (point.payload or {}).get("text", "")
+                for point in existing_points
+            }
+            # Select only missing or changed chunks for embedding.
+            pending = [
+                (i, chunk, point_ids[i])
+                for i, chunk in enumerate(chunks)
+                if existing_text.get(point_ids[i]) != chunk
+            ]
+             # Skip Gemini completely if nothing changed.
+            if not pending:
+                print(f"Skipping unchanged file: {file_key}")
+                continue
+             # Embed only new or modified chunks.
+            pending_chunks = [chunk for _, chunk, _ in pending]
+            vectors = self.llm.embed(pending_chunks)
+
+            # Store only the chunks that need updating.
+            for (chunk_number, chunk, point_id), vector in zip(
+                pending, vectors
+            ):
+                payload = {
+                    **metadata,
+                    "chunk_number": chunk_number,
+                    "text": chunk,
+                }
+
                 self.client.upsert(
                     collection_name=settings.qdrant_collection,
-                    points=[models.PointStruct(id=point_id, vector=vector, payload=payload)],
+                    points=[
+                        models.PointStruct(
+                            id=point_id,
+                            vector=vector,
+                            payload=payload,
+                        )
+                    ],
                     wait=True,
                 )
-                # Increment the count after successful storage.
+
                 indexed += 1
+
+                print(
+                    f"Indexed {file_key}, chunk {chunk_number}"
+                )
+            
         # Return number of indexed chunks.
         return indexed
 
