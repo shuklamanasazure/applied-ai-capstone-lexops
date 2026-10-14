@@ -11,66 +11,49 @@ Simple FastAPI implementation for the M3 assignment.
 - **FastAPI + Pydantic v2**: API and contracts.
 - **uv**: dependency/environment management.
 
-## Setup
+- To execute the Program and Test
+# cd ~/lexops-project/applied-ai-capstone-lexops
+# uv run uvicorn capstone.M3.main:app --reload --port 8003  (Start the application)
+# uv run uvicorn capstone.M3.main:app --reload --port 8003 --log-level debug > /tmp/m3.log 2>&1 & (Start application in background)
+To Test the Fast API get call
+# curl http://127.0.0.1:8003/health
 
-```bash
-uv venv
-source .venv/bin/activate
-uv sync
-cp .env.example .env
-```
+- To test the ingestion into Qdrant from .md files
+curl -X POST http://localhost:8003/m3/ingest \
+  -H "Content-Type: application/json" \
+  -d '{
+    "corpus_dir": "/home/ubuntu/lexops-project/applied-ai-capstone-lexops/data/lexops/corpus",
+    "recreate": false
+  }'
 
-Start local Qdrant:
 
-```bash
-docker run -p 6333:6333 qdrant/qdrant
-```
+- To test the negotiation API with raw Json data to store in SuperMemory, As per design, It is counterparty data
+curl -X POST http://localhost:8003/m3/negotiations  -H "Content-Type: application/json"  --data @negotiation.json
 
-Set `.env`:
+negotiation.json contains: 
+{ "counterparty_id": "acme", "contract_id": "acme-2026", "clause_type": "liability", "request": "5x annual fees", "outcome": "approved 2x annual fees", "rationale": "Firm policy and prior Acme precedent", "source": "Acme Contract 2026" }
 
-```env
-CORPUS_DIR=/data/lexops/corpus
-QDRANT_URL=http://localhost:6333
-QDRANT_COLLECTION=lexops_knowledge
-GEMINI_API_KEY=your_key
-GEMINI_MODEL=gemini-2.5-flash
-GEMINI_EMBEDDING_MODEL=gemini-embedding-001
-SUPERMEMORY_API_KEY=your_key
-LLM_PROVIDER=gemini
-CLAUDE_API_KEY=
-CLAUDE_MODEL=claude-haiku-4-5
-```
+- To test the extraction from SuperMemory, LLM will analyze the extracted data
+curl -X POST http://localhost:8000/m3/memory/extract \ -H "Content-Type: application/json" \ -d '{ "counterparty_id": "acme", "query": "Acme negotiation preferences accepted rejected terms recurring positions", "top_k": 10 }'
 
-Run:
 
-```bash
-uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
-```
+- To extract the memory data from SuperMemory
+curl http://localhost:8003/m3/counterparties/acme/memory
 
-## M3 endpoints
+- Post query to /m3/search and response is result
+curl -X POST http://localhost:8003/m3/search \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "Acme is requesting a liability cap of 5x annual fees. What should we propose?",
+    "clause_type": "liability",
+    "counterparty_id": "acme",
+    "top_k": 2
+  }'
 
-```text
-POST /m3/ingest
-POST /m3/search
-GET  /m3/counterparties/{counterparty_id}/memory
-POST /m3/negotiations
-POST /m3/memory/extract
-```
-
-## Demonstration
-
-1. `POST /m3/ingest`
-2. Add two or three Acme outcomes with `POST /m3/negotiations`.
-3. `POST /m3/memory/extract` for `acme`.
-4. `GET /m3/counterparties/acme/memory`.
-5. `POST /m3/search` with the 5x liability-cap question.
-
-The final agent can combine the Qdrant result and Supermemory result:
-
-```text
-Firm standard: 2x annual fees
-Approved precedent: 2x–3x for similar enterprise customers
-Acme history: previously accepted 2x
-Current request: 5x
-Recommendation: counter at 2x; escalate above 3x
-```
+curl -X POST http://localhost:8003/m3/search \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "standard liability cap",
+    "clause_type": "liability",
+    "top_k": 5
+  }'
